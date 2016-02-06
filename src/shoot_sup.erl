@@ -23,5 +23,24 @@ start_link() ->
 %% ===================================================================
 
 init([]) ->
-    {ok, { {one_for_one, 5, 10}, []} }.
+    Field = child(field, worker),
+    Gamers = child(gamers, supervisor),
+    Children = [
+                Field,
+                Gamers
+               ],
+    Strategy = rest_for_one,
+    Restarts = 10,
+    Seconds = 60,
+    Flags = {Strategy, Restarts, Seconds},
+    Spec = {Flags, Children},
+    {ok, Spec}.
+
+%%%===================================================================
+%%% Internal functions
+%%%===================================================================
+
+child(I, Type) ->
+    Fun = {I, start_link, []},
+    {I, Fun, permanent, 5000, Type, [I]}.
 
