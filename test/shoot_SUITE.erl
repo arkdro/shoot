@@ -50,10 +50,10 @@ end_per_testcase(whole_play, _C) ->
 whole_play(_) ->
     L = ets:tab2list(shoot_field),
     ct:pal("tab: ~p", [L]),
-    prepare_positions(),
+    [P1, P2] = prepare_positions(),
     L2 = ets:tab2list(shoot_field),
     ct:pal("tab2: ~p", [L2]),
-    %% shoot(),
+    shoot(P1, P2),
     %% check_result(),
     1=2,
     ok.
@@ -77,7 +77,7 @@ prepare_positions() ->
     [P1, P2] = ets:tab2list(shoot_field),
     move_to_1_1(P1),
     move_to_max_max(P2),
-    ok.
+    [P1, P2].
 
 move_to_1_1(Gamer) ->
     move_to(-1, -1, Gamer).
@@ -96,4 +96,8 @@ make_one_move(Pid, Dx, Dy) ->
     Res = shoot_field:move(Pid, Dx, Dy),
     timer:sleep(2 + time_limit() div 1000),
     Res.
+
+shoot(Gamer1, Gamer2) ->
+    Pid = shoot_field:extract_pid(Gamer1),
+    shoot_field:shoot(Pid, 1, 1).
 
