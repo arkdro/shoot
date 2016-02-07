@@ -1,6 +1,8 @@
 -module(shoot_util).
 
 -export([
+         log_move/3,
+         log_shoot/3
         ]).
 
 log_move(Player, X, Y) ->
@@ -8,6 +10,10 @@ log_move(Player, X, Y) ->
 
 log_shoot(Player, X, Y) ->
     log_action(shoot, Player, X, Y).
+
+%%%===================================================================
+%%% Internal functions
+%%%===================================================================
 
 log_action(Action, Player, X, Y) ->
     T = get_timestamp(),
