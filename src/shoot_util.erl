@@ -5,19 +5,19 @@
          log_shoot/3
         ]).
 
-log_move(Player, X, Y) ->
-    log_action(move, Player, X, Y).
+log_move(Player, Point1, Point2) ->
+    log_action(move, {Player, Point1, Point2}).
 
 log_shoot(Player, X, Y) ->
-    log_action(shoot, Player, X, Y).
+    log_action(shoot, {Player, X, Y}).
 
 %%%===================================================================
 %%% Internal functions
 %%%===================================================================
 
-log_action(Action, Player, X, Y) ->
+log_action(Action, Info) ->
     T = get_timestamp(),
-    error_logger:info_report({T, action, Action, Player, X, Y}).
+    error_logger:info_report({T, Action, Info}).
 
 get_timestamp() ->
     {_, _, Us} = T = os:timestamp(),
