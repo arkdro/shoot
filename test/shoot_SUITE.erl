@@ -48,10 +48,10 @@ end_per_testcase(whole_play, _C) ->
     ok.
 
 whole_play(_) ->
-    Ref = setup_monitor(),
-    [P1, P2] = prepare_positions(),
-    shoot(P1, P2),
-    ok = check_result(Ref),
+    Info = setup_monitor(),
+    [P1, _P2] = prepare_positions(),
+    shoot(P1),
+    ok = check_result(Info),
     ok.
 
 %%%===================================================================
@@ -93,18 +93,26 @@ make_one_move(Pid, Dx, Dy) ->
     timer:sleep(2 + time_limit() div 1000),
     Res.
 
-shoot(Gamer1, Gamer2) ->
+shoot(Gamer1) ->
     Pid = shoot_field:extract_pid(Gamer1),
     shoot_field:shoot(Pid, 1, 1).
 
 setup_monitor() ->
-    monitor(process, shoot_field).
+    Name = shoot_field,
+    Ref = monitor(process, Name),
+    {status, Pid, _, _} = sys:get_status(Name),
+    {Pid, Ref}.
 
-check_result(Ref) ->
+check_result({Pid, Ref}) ->
     receive
         {'DOWN', Ref, process, _Obj, normal} ->
             ok
     after 0 ->
-            {error, timeout}
+            Info = process_info(Pid),
+            State = sys:get_state(Pid),
+            Field = ets:tab2list(shoot_field),
+            ct:pal("server info: ~p~nstate: ~p~nfield: ~p",
+                   [Info, State, Field]),
+            {error, shoot_field_still_active}
     end.
 
