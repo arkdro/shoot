@@ -117,6 +117,11 @@ fetch_player_info(Storage, Player) ->
             undefined
     end.
 
+calc_new_coordinates(X0, Y0, X, Y, Width, Height) ->
+    X2 = calc_one_coord(X0, X, Width),
+    Y2 = calc_one_coord(Y0, Y, Height),
+    {X2, Y2}.
+
 calc_one_coord(V0, V, Max) when V0 + V < 1 ->
     1;
 calc_one_coord(V0, V, Max) when V0 + V > Max ->
