@@ -11,7 +11,17 @@
 
 -define(SERVER, ?MODULE).
 
--record(state, {}).
+-record(state, {
+          storage
+         }).
+
+-record(gamer, {
+          pid :: pid(),
+          x :: non_neg_integer(),
+          y :: non_neg_integer(),
+          status = alive :: dead | alive | z,
+          kills = 0 :: non_neg_integer()
+         }).
 
 %%%===================================================================
 %%% API
