@@ -101,6 +101,13 @@ add_new_gamer(Storage, Pid, X, Y) ->
               },
     store_gamer(Storage, Gamer).
 
+calc_one_coord(V0, V, Max) when V0 + V < 1 ->
+    1;
+calc_one_coord(V0, V, Max) when V0 + V > Max ->
+    Max;
+calc_one_coord(V0, V, Max) ->
+    V0 + V.
+
 add_player(State) ->
     {Pid, Storage2} = prepare_one_gamer(Storage, Width, Height),
     State2 = State#state{
