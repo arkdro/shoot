@@ -3,6 +3,7 @@
 -behaviour(gen_server).
 
 -export([
+         move/3,
          new_player/0,
          start_link/0
         ]).
@@ -31,6 +32,9 @@
 start_link() ->
     gen_server:start_link({local, ?SERVER}, ?MODULE, [], []).
 
+move(Player, X, Y) ->
+    gen_server:call(?SERVER, {move, Player, X, Y}).
+
 new_player() ->
     gen_server:call(?SERVER, new_player).
 
@@ -45,6 +49,9 @@ init([]) ->
 
 handle_call(new_player, _From, State) ->
     {Reply, State2} = add_player(State),
+    {reply, Reply, State2};
+handle_call({move, Player, X, Y}, _From, State) ->
+    {Reply, State2} = handle_move(Player, X, Y, State),
     {reply, Reply, State2};
 handle_call(_Request, _From, State) ->
     Reply = ok,
@@ -101,6 +108,14 @@ add_new_gamer(Storage, Pid, X, Y) ->
               },
     store_gamer(Storage, Gamer).
 
+handle_move(Player, X, Y, State) ->
+    case is_player_alive(Player, State) of
+        true ->
+            move(Player, X, Y, State);
+        false ->
+            {{error, dead}, State}
+    end.
+
 is_player_alive(Player, #state{storage = Storage}) ->
     case fetch_player_info(Storage, Player) of
         #gamer{status = alive} ->
@@ -115,6 +130,17 @@ fetch_player_info(Storage, Player) ->
             Info;
         [] ->
             undefined
+    end.
+
+move(Player, X, Y, State) ->
+    case shoot_gamer:move(Player) of
+        ok ->
+            State2 = update_coordinates(Player, X, Y, State),
+            New = get_coordinates(Player, State),
+            shoot_util:log_move(Player, {X, Y}, New),
+            {ok, State2};
+        {error, _} = Error ->
+            {Error, State}
     end.
 
 update_coordinates(Player, X, Y, #state{storage = Storage,
