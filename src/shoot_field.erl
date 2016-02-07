@@ -187,6 +187,8 @@ calc_one_coord(V0, V, _) ->
     V0 + V.
 
 get_coordinates(Player, #state{storage = Storage}) ->
+    get_coordinates(Player, Storage);
+get_coordinates(Player, Storage) ->
     #gamer{x = X, y = Y} = fetch_player_info(Storage, Player),
     {X, Y}.
 
