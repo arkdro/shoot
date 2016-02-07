@@ -174,11 +174,11 @@ calc_new_coordinates(X0, Y0, X, Y, Width, Height) ->
     Y2 = calc_one_coord(Y0, Y, Height),
     {X2, Y2}.
 
-calc_one_coord(V0, V, Max) when V0 + V < 1 ->
+calc_one_coord(V0, V, _) when V0 + V < 1 ->
     1;
 calc_one_coord(V0, V, Max) when V0 + V > Max ->
     Max;
-calc_one_coord(V0, V, Max) ->
+calc_one_coord(V0, V, _) ->
     V0 + V.
 
 get_coordinates(Player, #state{storage = Storage}) ->
