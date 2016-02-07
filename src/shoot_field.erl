@@ -37,10 +37,16 @@
 start_link() ->
     gen_server:start_link({local, ?SERVER}, ?MODULE, [], []).
 
-move(Player, X, Y) ->
+move(_, 0, 0) ->
+    error(badarg);
+move(Player, X, Y) when (X =:= -1 orelse X =:= 0 orelse X =:= 1) andalso
+                        (Y =:= -1 orelse Y =:= 0 orelse Y =:= 1) ->
     gen_server:call(?SERVER, {move, Player, X, Y}).
 
-shoot(Player, X, Y) ->
+shoot(_, 0, 0) ->
+    error(badarg);
+shoot(Player, X, Y) when (X =:= -1 orelse X =:= 0 orelse X =:= 1) andalso
+                         (Y =:= -1 orelse Y =:= 0 orelse Y =:= 1) ->
     gen_server:call(?SERVER, {shoot, Player, X, Y}).
 
 new_player() ->
