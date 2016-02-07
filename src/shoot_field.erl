@@ -228,6 +228,13 @@ prepare_data(Storage, Winner) ->
     L = ets:tab2list(Storage),
     lists:delete(Winner, L).
 
+has_space(X, Y, Dx, Dy, Width, Height) ->
+    {X2, Y2} = calc_new_raw_coordinates(X, Y, Dx, Dy),
+    X2 >= 1
+        andalso X2 =< Width
+        andalso Y2 >= 1
+        andalso Y2 =< Height.
+
 kill(Target, Player, Storage) ->
     Storage2 = increment_kills(Player, Storage),
     shoot_gamer_sup:stop_child(Target),
