@@ -1,6 +1,7 @@
 -module(shoot_util).
 
 -export([
+         get_env/2,
          log_move/3,
          log_shoot/3
         ]).
@@ -10,6 +11,9 @@ log_move(Player, Point1, Point2) ->
 
 log_shoot(Player, X, Y) ->
     log_action(shoot, {Player, X, Y}).
+
+get_env(Key, Default) ->
+    application:get_env(shoot, Key, Default).
 
 %%%===================================================================
 %%% Internal functions
