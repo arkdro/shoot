@@ -117,6 +117,18 @@ fetch_player_info(Storage, Player) ->
             undefined
     end.
 
+update_coordinates(Player, X, Y, #state{storage = Storage,
+                                        width = Width,
+                                        height = Height} = State) ->
+    Gamer#gamer{x = X0, y = Y0} = fetch_player_info(Storage, Player),
+    {X2, Y2} = calc_new_coordinates(X0, Y0, X, Y, Width, Height),
+    Gamer2 = Gamer#gamer{
+               x = X2,
+               y = Y2
+              },
+    Storage2 = store_gamer(Storage, Gamer2),
+    State#state{storage = Storage2}.
+
 calc_new_coordinates(X0, Y0, X, Y, Width, Height) ->
     X2 = calc_one_coord(X0, X, Width),
     Y2 = calc_one_coord(Y0, Y, Height),
