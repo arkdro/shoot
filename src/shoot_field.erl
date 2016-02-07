@@ -228,3 +228,19 @@ prepare_data(Storage, Winner) ->
     L = ets:tab2list(Storage),
     lists:delete(Winner, L).
 
+kill(Target, Player, Storage) ->
+    Storage2 = increment_kills(Player, Storage),
+    shoot_gamer_sup:stop_child(Target),
+    mark_dead(Target, Storage2).
+
+increment_kills(Player, Storage) ->
+    Info = fetch_player_info(Storage, Player),
+    #gamer{kills = N} = Info,
+    Info2 = Info#gamer{kills = N + 1},
+    store_gamer(Storage, Info2).
+
+mark_dead(Target, Storage) ->
+    Info = fetch_player_info(Storage, Target),
+    Info2 = Info#gamer{status = dead},
+    store_gamer(Storage, Info2).
+
