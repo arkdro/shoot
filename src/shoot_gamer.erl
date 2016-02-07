@@ -4,6 +4,7 @@
 
 -export([
          move/1,
+         shoot/1,
          start_link/1
         ]).
 
@@ -27,6 +28,9 @@ start_link(Args) ->
 move(Player) ->
     gen_server:call(Player, move).
 
+shoot(Player) ->
+    gen_server:call(Player, shoot).
+
 %%%===================================================================
 %%% gen_server callbacks
 %%%===================================================================
@@ -38,6 +42,16 @@ init(Args) ->
                    limit = Limit},
     {ok, State}.
 
+handle_call(shoot, _From, #state{time=T1} = State) ->
+    case can_shoot(State) of
+        true ->
+            Reply = ok,
+            State2 = update_time(State),
+            {reply, Reply, State2};
+        false ->
+            Reply = {error, too_soon},
+            {reply, Reply, State}
+    end;
 handle_call(move, _From, #state{time=T1} = State) ->
     case can_move(State) of
         true ->
@@ -67,6 +81,9 @@ code_change(_OldVsn, State, _Extra) ->
 %%%===================================================================
 %%% Internal functions
 %%%===================================================================
+
+can_shoot(State) ->
+    can_move(State).
 
 can_move(#state{time = T1, limit = Limit}) ->
     T2 = os:timestamp(),
