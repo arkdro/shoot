@@ -159,7 +159,8 @@ move(Player, X, Y, State) ->
 update_coordinates(Player, X, Y, #state{storage = Storage,
                                         width = Width,
                                         height = Height} = State) ->
-    Gamer#gamer{x = X0, y = Y0} = fetch_player_info(Storage, Player),
+    Gamer = fetch_player_info(Storage, Player),
+    #gamer{x = X0, y = Y0} = Gamer,
     {X2, Y2} = calc_new_coordinates(X0, Y0, X, Y, Width, Height),
     Gamer2 = Gamer#gamer{
                x = X2,
