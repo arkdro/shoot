@@ -29,7 +29,7 @@ init([]) ->
                 Gamers,
                 Field
                ],
-    Strategy = rest_for_one,
+    Strategy = one_for_all,
     Restarts = 10,
     Seconds = 60,
     Flags = {Strategy, Restarts, Seconds},
