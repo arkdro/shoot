@@ -2,7 +2,7 @@
  [
   {description, "shoot"},
   {vsn, "0.0.1"},
-  {registered, []},
+  {registered, [shoot_sup, shoot_gamer_sup, shoot_field]},
   {applications, [
                   kernel,
                   stdlib
