@@ -4,6 +4,7 @@
 
 -export([
          move/3,
+         shoot/3,
          new_player/0,
          start_link/0
         ]).
@@ -39,6 +40,9 @@ start_link() ->
 move(Player, X, Y) ->
     gen_server:call(?SERVER, {move, Player, X, Y}).
 
+shoot(Player, X, Y) ->
+    gen_server:call(?SERVER, {shoot, Player, X, Y}).
+
 new_player() ->
     gen_server:call(?SERVER, new_player).
 
@@ -57,6 +61,15 @@ handle_call(new_player, _From, State) ->
 handle_call({move, Player, X, Y}, _From, State) ->
     {Reply, State2} = handle_move(Player, X, Y, State),
     {reply, Reply, State2};
+handle_call({shoot, Player, X, Y}, _From, State) ->
+    {Reply, State2} = handle_shoot(Player, X, Y, State),
+    case is_end(State2) of
+        true ->
+            print_report(State2),
+            {stop, normal, Reply, State2};
+        false ->
+            {reply, Reply, State2}
+    end;
 handle_call(_Request, _From, State) ->
     Reply = ok,
     {reply, Reply, State}.
@@ -191,6 +204,14 @@ get_coordinates(Player, #state{storage = Storage}) ->
 get_coordinates(Player, Storage) ->
     #gamer{x = X, y = Y} = fetch_player_info(Storage, Player),
     {X, Y}.
+
+handle_shoot(Player, X, Y, State) ->
+    case is_player_alive(Player, State) of
+        true ->
+            shoot(Player, X, Y, State);
+        false ->
+            {{error, dead}, State}
+    end.
 
 shoot(Player, X, Y, State) ->
     case shoot_gamer:shoot(Player) of
