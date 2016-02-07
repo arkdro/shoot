@@ -48,13 +48,14 @@ end_per_testcase(whole_play, _C) ->
     ok.
 
 whole_play(_) ->
+    Ref = setup_monitor(),
     L = ets:tab2list(shoot_field),
     ct:pal("tab: ~p", [L]),
     [P1, P2] = prepare_positions(),
     L2 = ets:tab2list(shoot_field),
     ct:pal("tab2: ~p", [L2]),
     shoot(P1, P2),
-    %% check_result(),
+    ok = check_result(Ref),
     1=2,
     ok.
 
@@ -100,4 +101,15 @@ make_one_move(Pid, Dx, Dy) ->
 shoot(Gamer1, Gamer2) ->
     Pid = shoot_field:extract_pid(Gamer1),
     shoot_field:shoot(Pid, 1, 1).
+
+setup_monitor() ->
+    monitor(process, shoot_field).
+
+check_result(Ref) ->
+    receive
+        {'DOWN', Ref, process, _Obj, normal} ->
+            ok
+    after 0 ->
+            {error, timeout}
+    end.
 
