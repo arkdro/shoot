@@ -11,7 +11,10 @@
 
 -define(SERVER, ?MODULE).
 
--record(state, {}).
+-record(state, {
+          time,
+          limit
+         }).
 
 %%%===================================================================
 %%% API
@@ -25,7 +28,11 @@ start_link(Args) ->
 %%%===================================================================
 
 init(Args) ->
-    {ok, #state{}}.
+    Limit = get_time_limit(),
+    T = os:timestamp(),
+    State = #state{time = T,
+                   limit = Limit},
+    {ok, State}.
 
 handle_call(_Request, _From, State) ->
     Reply = ok,
@@ -47,4 +54,7 @@ code_change(_OldVsn, State, _Extra) ->
 %%% Internal functions
 %%%===================================================================
 
+
+get_time_limit() ->
+    shoot_util:get_env(time_limit, 100000).
 
