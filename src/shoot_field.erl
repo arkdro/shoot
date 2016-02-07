@@ -201,3 +201,6 @@ store_gamer(Storage, Gamer) ->
     ets:insert(Storage, Gamer),
     Storage.
 
+is_end(#state{n_alive = N}) ->
+    N =< 1.
+
