@@ -235,10 +235,6 @@ has_space(X, Y, Dx, Dy, Width, Height) ->
         andalso Y2 >= 1
         andalso Y2 =< Height.
 
-kill(Target, Player, Storage) ->
-    Storage2 = increment_kills(Player, Storage),
-    shoot_gamer_sup:stop_child(Target),
-    mark_dead(Target, Storage2).
 find_target_at_point(X, Y, Storage) ->
     Pattern = #gamer{x = X, y = Y},
     case ets:match_object(Storage, Pattern) of
@@ -249,13 +245,22 @@ find_target_at_point(X, Y, Storage) ->
             {ok, Pids}
     end.
 
-increment_kills(Player, Storage) ->
+kill(Targets, Player, Storage) ->
+    Storage2 = increment_kills(Targets, Player, Storage),
+    shoot_gamer_sup:stop_children(Targets),
+    mark_dead(Targets, Storage2).
+
+increment_kills(Targets, Player, Storage) ->
     Info = fetch_player_info(Storage, Player),
     #gamer{kills = N} = Info,
-    Info2 = Info#gamer{kills = N + 1},
+    Delta = length(Targets),
+    Info2 = Info#gamer{kills = N + Delta},
     store_gamer(Storage, Info2).
 
-mark_dead(Target, Storage) ->
+mark_dead(Targets, Storage) ->
+    lists:foldl(fun mark_one_dead/2, Storage, Targets).
+
+mark_one_dead(Target, Storage) ->
     Info = fetch_player_info(Storage, Target),
     Info2 = Info#gamer{status = dead},
     store_gamer(Storage, Info2).
