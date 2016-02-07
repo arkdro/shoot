@@ -23,11 +23,11 @@ start_link() ->
 %% ===================================================================
 
 init([]) ->
-    Field = child(field, worker),
-    Gamers = child(gamers, supervisor),
+    Field = child(shoot_field, worker),
+    Gamers = child(shoot_gamer_sup, supervisor),
     Children = [
-                Field,
-                Gamers
+                Gamers,
+                Field
                ],
     Strategy = rest_for_one,
     Restarts = 10,

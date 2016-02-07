@@ -125,7 +125,7 @@ prepare_one_gamer(Storage, Width, Height) ->
     Y = gen_random(Height),
     Args = [{x, X},
             {y, Y}],
-    {ok, Pid} = shoot_gamer_sup:start_child(Args),
+    {ok, Pid} = shoot_gamer_sup:start_child([Args]),
     Storage2 = add_new_gamer(Storage, Pid, X, Y),
     {Pid, Storage2}.
 

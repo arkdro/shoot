@@ -34,7 +34,7 @@ init([]) ->
     Seconds = 60,
     Flags = {Strategy, Restarts, Seconds},
     Module = shoot_gamer,
-    Fun = {Module, start_link, [[]]},
+    Fun = {Module, start_link, []},
     Child = {
       id,
       Fun,
