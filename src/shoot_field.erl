@@ -307,7 +307,7 @@ has_space(X, Y, Dx, Dy, Width, Height) ->
         andalso Y2 =< Height.
 
 find_target_at_point(X, Y, Storage) ->
-    Pattern = #gamer{x = X, y = Y},
+    Pattern = #gamer{x = X, y = Y, _ = '_'},
     case ets:match_object(Storage, Pattern) of
         [] ->
             error;
