@@ -35,14 +35,14 @@ shoot(Player) ->
 %%% gen_server callbacks
 %%%===================================================================
 
-init(Args) ->
+init(_Args) ->
     Limit = get_time_limit(),
     T = os:timestamp(),
     State = #state{time = T,
                    limit = Limit},
     {ok, State}.
 
-handle_call(shoot, _From, #state{time=T1} = State) ->
+handle_call(shoot, _From, State) ->
     case can_shoot(State) of
         true ->
             Reply = ok,
@@ -52,7 +52,7 @@ handle_call(shoot, _From, #state{time=T1} = State) ->
             Reply = {error, too_soon},
             {reply, Reply, State}
     end;
-handle_call(move, _From, #state{time=T1} = State) ->
+handle_call(move, _From, State) ->
     case can_move(State) of
         true ->
             Reply = ok,
@@ -90,7 +90,7 @@ can_move(#state{time = T1, limit = Limit}) ->
     Delta = timer:now_diff(T2, T1),
     Delta >= Limit.
 
-update_time(#state{time = T1} = State) ->
+update_time(State) ->
     T = os:timestamp(),
     State#state{time = T}.
 
