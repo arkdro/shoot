@@ -271,12 +271,13 @@ prepare_data(Storage, Winner) ->
     lists:delete(Winner, L).
 
 update_target(Player, X, Y, #state{width = Width, height = Height,
+                                   n_alive = Alive,
                                    storage = Storage} = State) ->
     case check_one_point(X, Y, Width, Height, Player, Storage) of
         {miss, _} ->
             State;
-        {hit, Storage2} ->
-            State#state{storage = Storage2}
+        {hit, Nhits, Storage2} ->
+            State#state{storage = Storage2, n_alive = Alive - Nhits}
     end.
 
 check_one_point(Dx, Dy, Width, Height, Player, Storage) ->
@@ -291,7 +292,7 @@ check_one_point(true, X, Y, Dx, Dy, Width, Height, Player, Storage) ->
     case find_target_at_point(X2, Y2, Storage) of
         {ok, Targets} ->
             Storage2 = kill(Targets, Player, Storage),
-            {hit, Storage2};
+            {hit, length(Targets), Storage2};
         error ->
             Flag = has_space(X2, Y2, Dx, Dy, Width, Height),
             check_one_point(Flag, X2, Y2, Dx, Dy, Width, Height,
