@@ -228,6 +228,25 @@ prepare_data(Storage, Winner) ->
     L = ets:tab2list(Storage),
     lists:delete(Winner, L).
 
+check_one_point(Dx, Dy, Width, Height, Player, Storage) ->
+    {X, Y} = get_coordinates(Player, Storage),
+    Flag = has_space(X, Y, Dx, Dy, Width, Height),
+    check_one_point(Flag, X, Y, Dx, Dy, Width, Height, Player, Storage).
+
+check_one_point(false, _, _, _, _, _, _, _, Storage) ->
+    {miss, Storage};
+check_one_point(true, X, Y, Dx, Dy, Width, Height, Player, Storage) ->
+    {X2, Y2} = calc_new_coordinates(X, Y, Dx, Dy, Width, Height),
+    case find_target_at_point(X2, Y2, Storage) of
+        {ok, Targets} ->
+            Storage2 = kill(Targets, Player, Storage),
+            {hit, Storage2};
+        error ->
+            Flag = has_space(X2, Y2, Dx, Dy, Width, Height),
+            check_one_point(Flag, X2, Y2, Dx, Dy, Width, Height,
+                            Player, Storage)
+    end.
+
 has_space(X, Y, Dx, Dy, Width, Height) ->
     {X2, Y2} = calc_new_raw_coordinates(X, Y, Dx, Dy),
     X2 >= 1
