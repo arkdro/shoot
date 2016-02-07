@@ -101,6 +101,14 @@ add_new_gamer(Storage, Pid, X, Y) ->
               },
     store_gamer(Storage, Gamer).
 
+fetch_player_info(Storage, Player) ->
+    case ets:lookup(Storage, Player) of
+        [Info] ->
+            Info;
+        [] ->
+            undefined
+    end.
+
 calc_one_coord(V0, V, Max) when V0 + V < 1 ->
     1;
 calc_one_coord(V0, V, Max) when V0 + V > Max ->
