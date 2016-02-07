@@ -3,6 +3,7 @@
 -behaviour(supervisor).
 
 -export([
+         stop_children/1,
          stop_child/1,
          start_child/1,
          start_link/0,
@@ -19,6 +20,9 @@ start_child(Args) ->
 
 stop_child(Pid) ->
     supervisor:terminate_child(?SERVER, Pid).
+
+stop_children(Pids) ->
+    [stop_child(Pid) || Pid <- Pids].
 
 %%%===================================================================
 %%% Supervisor callbacks
