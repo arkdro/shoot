@@ -206,3 +206,18 @@ store_gamer(Storage, Gamer) ->
 is_end(#state{n_alive = N}) ->
     N =< 1.
 
+print_report(#state{storage = Storage}) ->
+    Winner = find_winner(Storage),
+    io:format("winner:~n~p~n", [Winner]),
+    Data = prepare_data(Storage, Winner),
+    io:format("rest:~n~p~n", [Data]).
+
+find_winner(Storage) ->
+    Pattern = #gamer{status = alive, _ = '_'},
+    [Winner] = ets:match_object(Storage, Pattern),
+    Winner.
+
+prepare_data(Storage, Winner) ->
+    L = ets:tab2list(Storage),
+    lists:delete(Winner, L).
+
