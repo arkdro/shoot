@@ -35,8 +35,9 @@ end_per_suite(_Config) ->
 
 init_per_testcase(whole_play, Config) ->
     ok = application:load(shoot),
-    application:set_env(shoot, width, 3),
-    application:set_env(shoot, height, 3),
+    application:set_env(shoot, time_limit, time_limit()),
+    application:set_env(shoot, width, width()),
+    application:set_env(shoot, height, height()),
     application:set_env(shoot, n_gamers, 2),
     ok = application:start(shoot),
     Config.
@@ -48,4 +49,19 @@ end_per_testcase(whole_play, _C) ->
 
 whole_play(_) ->
     ok.
+
+%%%===================================================================
+%%% Internal functions
+%%%===================================================================
+
+%% microseconds
+time_limit() ->
+    100000.
+
+width() ->
+    3.
+
+%% exact square
+height() ->
+    width().
 
