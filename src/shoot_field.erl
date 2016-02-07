@@ -3,6 +3,7 @@
 -behaviour(gen_server).
 
 -export([
+         extract_pid/1,
          move/3,
          shoot/3,
          new_player/0,
@@ -51,6 +52,9 @@ shoot(Player, X, Y) when (X =:= -1 orelse X =:= 0 orelse X =:= 1) andalso
 
 new_player() ->
     gen_server:call(?SERVER, new_player).
+
+extract_pid(#gamer{pid = Pid}) ->
+    Pid.
 
 %%%===================================================================
 %%% gen_server callbacks
