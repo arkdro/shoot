@@ -239,6 +239,15 @@ kill(Target, Player, Storage) ->
     Storage2 = increment_kills(Player, Storage),
     shoot_gamer_sup:stop_child(Target),
     mark_dead(Target, Storage2).
+find_target_at_point(X, Y, Storage) ->
+    Pattern = #gamer{x = X, y = Y},
+    case ets:match_object(Storage, Pattern) of
+        [] ->
+            error;
+        L ->
+            Pids = [Pid || #gamer{pid = Pid} <- L],
+            {ok, Pids}
+    end.
 
 increment_kills(Player, Storage) ->
     Info = fetch_player_info(Storage, Player),
