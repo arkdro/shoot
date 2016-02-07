@@ -3,6 +3,7 @@
 -behaviour(gen_server).
 
 -export([
+         new_player/0,
          start_link/0
         ]).
 
@@ -30,6 +31,9 @@
 start_link() ->
     gen_server:start_link({local, ?SERVER}, ?MODULE, [], []).
 
+new_player() ->
+    gen_server:call(?SERVER, new_player).
+
 %%%===================================================================
 %%% gen_server callbacks
 %%%===================================================================
@@ -39,6 +43,9 @@ init([]) ->
     State = init_state(),
     {ok, State}.
 
+handle_call(new_player, _From, State) ->
+    {Reply, State2} = add_player(State),
+    {reply, Reply, State2};
 handle_call(_Request, _From, State) ->
     Reply = ok,
     {reply, Reply, State}.
@@ -94,6 +101,14 @@ add_new_gamer(Storage, Pid, X, Y) ->
               },
     store_gamer(Storage, Gamer).
 
+add_player(State) ->
+    {Pid, Storage2} = prepare_one_gamer(Storage, Width, Height),
+    State2 = State#state{
+               storage = Storage2,
+               n_gamers = N + 1
+              },
+    Reply = {ok, Pid},
+    {Reply, State2}.
 
 prepare_storage() ->
     ets:new(?SERVER, [named_table, {keypos, #gamer.pid}]).
