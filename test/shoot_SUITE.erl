@@ -49,14 +49,9 @@ end_per_testcase(whole_play, _C) ->
 
 whole_play(_) ->
     Ref = setup_monitor(),
-    L = ets:tab2list(shoot_field),
-    ct:pal("tab: ~p", [L]),
     [P1, P2] = prepare_positions(),
-    L2 = ets:tab2list(shoot_field),
-    ct:pal("tab2: ~p", [L2]),
     shoot(P1, P2),
     ok = check_result(Ref),
-    1=2,
     ok.
 
 %%%===================================================================
