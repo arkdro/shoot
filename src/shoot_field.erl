@@ -102,11 +102,16 @@ prepare_gamers(Storage, Ngamers, Width, Height) ->
     lists:foldl(F, Storage, lists:seq(1, Ngamers)).
 
 prepare_one_gamer(Storage, Width, Height) ->
+    X = gen_random(Width),
+    Y = gen_random(Height),
     Args = [{x, X},
             {y, Y}],
     {ok, Pid} = shoot_gamer_sup:start_child(Args),
     Storage2 = add_new_gamer(Storage, Pid, X, Y),
     {Pid, Storage2}.
+
+gen_random(Max) ->
+    random:uniform(Max).
 
 add_new_gamer(Storage, Pid, X, Y) ->
     Gamer = #gamer{
