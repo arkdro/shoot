@@ -228,6 +228,15 @@ prepare_data(Storage, Winner) ->
     L = ets:tab2list(Storage),
     lists:delete(Winner, L).
 
+update_target(Player, X, Y, #state{width = Width, height = Height,
+                                   storage = Storage} = State) ->
+    case check_one_point(X, Y, Width, Height, Player, Storage) of
+        {miss, _} ->
+            State;
+        {hit, Storage2} ->
+            State#state{storage = Storage2}
+    end.
+
 check_one_point(Dx, Dy, Width, Height, Player, Storage) ->
     {X, Y} = get_coordinates(Player, Storage),
     Flag = has_space(X, Y, Dx, Dy, Width, Height),
