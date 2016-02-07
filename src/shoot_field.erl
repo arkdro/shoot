@@ -108,6 +108,10 @@ calc_one_coord(V0, V, Max) when V0 + V > Max ->
 calc_one_coord(V0, V, Max) ->
     V0 + V.
 
+get_coordinates(Player, #state{storage = Storage}) ->
+    #gamer{x = X, y = Y} = fetch_player_info(Storage, Player),
+    {X, Y}.
+
 add_player(State) ->
     {Pid, Storage2} = prepare_one_gamer(Storage, Width, Height),
     State2 = State#state{
