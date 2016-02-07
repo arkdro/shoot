@@ -14,7 +14,11 @@
 -define(SERVER, ?MODULE).
 
 -record(state, {
-          storage
+          storage,
+          width,
+          height,
+          n_alive,
+          n_gamers
          }).
 
 -record(gamer, {
@@ -74,12 +78,16 @@ code_change(_OldVsn, State, _Extra) ->
 %%%===================================================================
 
 init_state() ->
+    Ngamers = shoot_util:get_env(n_gamers, 1),
+    Width = shoot_util:get_env(width, 1),
+    Height = shoot_util:get_env(height, 1),
     Storage = prepare_and_fill_storage(Ngamers, Width, Height),
     #state{
        storage = Storage,
        width = Width,
        height = Height,
-       n_gamers = Ngamers
+       n_gamers = Ngamers,
+       n_alive = Ngamers
       }.
 
 prepare_and_fill_storage(Ngamers, Width, Height) ->
