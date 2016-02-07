@@ -192,6 +192,17 @@ get_coordinates(Player, Storage) ->
     #gamer{x = X, y = Y} = fetch_player_info(Storage, Player),
     {X, Y}.
 
+shoot(Player, X, Y, State) ->
+    case shoot_gamer:shoot(Player) of
+        ok ->
+            State2 = update_target(Player, X, Y, State),
+            Current = get_coordinates(Player, State),
+            shoot_util:log_shoot(Player, {X, Y}, Current),
+            {ok, State2};
+        {error, _} = Error ->
+            {Error, State}
+    end.
+
 add_player(#state{n_gamers = Total, n_alive = Alive, width = Width,
                  height = Height, storage = Storage} = State) ->
     {Pid, Storage2} = prepare_one_gamer(Storage, Width, Height),
