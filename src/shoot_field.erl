@@ -185,11 +185,13 @@ get_coordinates(Player, #state{storage = Storage}) ->
     #gamer{x = X, y = Y} = fetch_player_info(Storage, Player),
     {X, Y}.
 
-add_player(State) ->
+add_player(#state{n_gamers = Total, n_alive = Alive, width = Width,
+                 height = Height, storage = Storage} = State) ->
     {Pid, Storage2} = prepare_one_gamer(Storage, Width, Height),
     State2 = State#state{
                storage = Storage2,
-               n_gamers = N + 1
+               n_gamers = Total + 1,
+               n_alive = Alive + 1
               },
     Reply = {ok, Pid},
     {Reply, State2}.
